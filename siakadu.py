@@ -6,14 +6,20 @@ class Mahasiswa:
         self.kuliah = []
         
     def tambah_mata_kuliah(self, mata_kuliah):
-        self.kuliah.append(mata_kuliah)
-        self.mata_kuliah = mata_kuliah
-        mata_kuliah.tambah_mahasiswa(self)
+        if mata_kuliah.kuota > 0:
+            self.kuliah.append(mata_kuliah)
+            mata_kuliah.kurangi_kuota()
+            print(f"Mahasiswa {self.nama} berhasil menambah Mata Kuliah {mata_kuliah.nama}. \nKode MK: {mata_kuliah.kode} \nJumlah SKS: {mata_kuliah.jmlSks} SKS")
+            print(f"Sisa kuota mata kuliah {mata_kuliah.nama}: {mata_kuliah.kuota}\n")
+        else:
+            print(f"Maaf, kuota mata kuliah {mata_kuliah.nama} telah penuh.\n")
     
     def hapus_mata_kuliah(self, mata_kuliah):
         if mata_kuliah in self.kuliah:
             self.kuliah.remove(mata_kuliah)
-            mata_kuliah.hapus_mahasiswa(self)
+            mata_kuliah.tambah_kuota()
+            print(f"Mahasiswa {self.nama} berhasil menghapus Mata Kuliah {mata_kuliah.nama}.")
+            print(f"Sisa kuota mata kuliah {mata_kuliah.nama}: {mata_kuliah.kuota}\n")
     
     def list_mata_kuliah(self):
         print(f"List mata kuliah {self.nama}:")
@@ -21,29 +27,24 @@ class Mahasiswa:
             print(f"- {mk.nama} ({mk.kode})")
 
 class MataKuliah:
-    def __init__(self, nama, kode):
+    def __init__(self, nama, kode, jmlSks, kuota):
         self.nama = nama
         self.kode = kode
-        self.mahasiswa = []
+        self.jmlSks = jmlSks
+        self.kuota = kuota
 
-    def tambah_mahasiswa(self, mahasiswa):
-        if mahasiswa not in self.mahasiswa:
-            self.mahasiswa.append(mahasiswa)
-
-    def hapus_mahasiswa(self, mahasiswa):
-        if mahasiswa in self.mahasiswa:
-            self.mahasiswa.remove(mahasiswa)
-
-    def list_mahasiswa(self):
-        print(f"List mahasiswa di mata kuliah {self.nama}:")
-        for mhs in self.mahasiswa:
-            print(f"- {mhs.nama} ({mhs.npm})")
+    def kurangi_kuota(self):
+        if self.kuota > 0:
+            self.kuota -= 1
+    
+    def tambah_kuota(self):
+        self.kuota += 1
 
 m1 = Mahasiswa("Divany Pangestika", "2215061036", "Teknik Informatika")
 m2 = Mahasiswa("Amelia Putri", "2215061088", "Teknik Informatika")
 
-mk1 = MataKuliah("Pemrograman Berorientasi Objek", "INF620213")
-mk2 = MataKuliah("Kecerdasan Buatan", "INF620215")
+mk1 = MataKuliah("Pemrograman Berorientasi Objek", "INF620213", 4, 2)
+mk2 = MataKuliah("Kecerdasan Buatan", "INF620215", 3, 1)
 
 m1.tambah_mata_kuliah(mk1)
 m1.tambah_mata_kuliah(mk2)
@@ -52,14 +53,14 @@ print("\n")
 m2.tambah_mata_kuliah(mk1)
 print("\n")
 
+print("Sebelum penghapusan:")
 m1.list_mata_kuliah()
-print("\n")
-
 m2.list_mata_kuliah()
 print("\n")
 
-mk1.list_mahasiswa()
-print("\n")
+#Menghapus mata kuliah pada mahasiswa 1
+m1.hapus_mata_kuliah(mk1)
 
-mk2.list_mahasiswa()  
+print("\nSetelah penghapusan:")
+m1.list_mata_kuliah()
     
